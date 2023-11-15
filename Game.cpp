@@ -1,7 +1,8 @@
 #include "Game.h"
+#include "TextureManager.h"
+#include "GameObject.h"
 
-SDL_Texture* gridTexture;
-SDL_Rect srcR, destR;
+GameObject* grid;
 
 Game::Game()
 {}
@@ -36,15 +37,12 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		isRunning = true;
 	}
 
-	SDL_Surface* tmpSurface = IMG_Load("Assets/Sprites/T_Grid.png");
-	gridTexture = SDL_CreateTextureFromSurface(renderer, tmpSurface);
-	SDL_FreeSurface(tmpSurface);
+	grid = new GameObject("Assets/Sprites/T_Grid.png", renderer);
+}
 
-	destR.h = 512;
-	destR.w = 256;
-	destR.x = width/2 - 128;
-	destR.y = height/2 - 256;
-
+void Game::start()
+{
+	grid->Start();
 }
 
 void Game::handleEvents()
@@ -69,9 +67,7 @@ void Game::update()
 void Game::render()
 {
 	SDL_RenderClear(renderer);
-
-	SDL_RenderCopy(renderer, gridTexture, NULL, &destR);
-
+	grid->Render();
 	SDL_RenderPresent(renderer);
 }
 

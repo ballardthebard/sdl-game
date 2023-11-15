@@ -11,6 +11,7 @@ int main(int argc, char* argv[])
 	while (game->running())
 	{
 		game->handleEvents();
+		game->start();
 		game->update();
 		game->render();
 	}
