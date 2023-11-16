@@ -48,16 +48,21 @@ public:
 	void update()
 	{
 		for (auto& c : components) c->update();
+	}
+	
+	void draw() 
+	{
 		for (auto& c : components) c->draw();
 	}
-	void draw() {}
+	
 	bool isActive() const { return active; }
+	
 	void destroy() { active = false; }
 
 	// checks if the entity has a specific component of type T
 	template<typename T> bool hasComponent() const
 	{
-		return componentBiSet[getComponentTypeID<T>];
+		return componentBitSet[getComponentTypeID<T>];
 	}
 
 	// adds a new component of type T to the entity
@@ -67,7 +72,7 @@ public:
 		T* c(new T(std::forward<TArgs>(mArgs)...));
 		c->entity = this;
 		std::unique_ptr<Component> uPtr{ c };
-		components.emplace_black(std::move(uPtr));
+		components.emplace_back(std::move(uPtr));
 
 		componentArray[getComponentTypeID<T>()] = c;
 		componentBitSet[getComponentTypeID<T>()] = true;
@@ -88,7 +93,7 @@ private:
 	std::vector<std::unique_ptr<Component>> components;
 
 	ComponentArray componentArray;
-	ComponentBitSet componentBiSet;
+	ComponentBitSet componentBitSet;
 };
 
 class Manager
