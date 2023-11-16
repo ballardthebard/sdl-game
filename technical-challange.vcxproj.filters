@@ -38,5 +38,11 @@
     <ClInclude Include="TextureManager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="ECS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
