@@ -4,5 +4,9 @@
 class TextureManager
 {
 public:
-	static SDL_Texture* LoadTexture(const char* filePath, SDL_Renderer* ren);
+	static SDL_Texture* LoadTexture(const char* filePath);
+	static void  Draw(SDL_Texture* tex, SDL_Rect src, SDL_Rect dest);
+
+private:
+	SDL_Renderer* renderer;
 };

@@ -1,8 +1,8 @@
 #include "Game.h"
 #include "TextureManager.h"
-#include "GameObject.h"
+#include "Components.h"
 
-GameObject* grid;
+SDL_Renderer* Game::renderer = nullptr;
 
 Game::Game()
 {}
@@ -36,13 +36,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		}
 		isRunning = true;
 	}
-
-	grid = new GameObject("Assets/Sprites/T_Grid.png", renderer);
 }
 
 void Game::start()
 {
-	grid->Start();
 }
 
 void Game::handleEvents()
@@ -67,7 +64,7 @@ void Game::update()
 void Game::render()
 {
 	SDL_RenderClear(renderer);
-	grid->Render();
+
 	SDL_RenderPresent(renderer);
 }
 
