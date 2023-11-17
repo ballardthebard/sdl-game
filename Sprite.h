@@ -20,21 +20,21 @@ public:
 	{
 		transform = &entity->getComponent<Transform>();
 
-		srcRect.h = 512;
-		srcRect.w = 256;
+		srcRect.h = 32;
+		srcRect.w = 32;
 		srcRect.x = 0;
 		srcRect.y = 0;
 
-		destRect.h = 512;
-		destRect.w = 256;
+		destRect.h = 32;
+		destRect.w = 32;
 		destRect.x = 0;
 		destRect.y = 0;
 	}
 
 	void update() override
 	{
-		destRect.x = transform->x_position();
-		destRect.y = transform->y_position();
+		destRect.x = (int)transform->position.x;
+		destRect.y = (int)transform->position.y;
 	}
 
 	void draw() override

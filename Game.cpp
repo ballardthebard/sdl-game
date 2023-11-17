@@ -4,8 +4,8 @@
 
 Manager manager;
 SDL_Renderer* Game::renderer = nullptr;
-
-auto& grid(manager.addEntity());
+SDL_Event Game::event;
+auto& square(manager.addEntity());
 
 Game::Game()
 {}
@@ -39,8 +39,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		}
 		isRunning = true;
 	}
-	grid.addComponent<Transform>();
-	grid.addComponent<Sprite>("Assets/Sprites/T_Grid.png");
+	square.addComponent<Transform>();
+	square.addComponent<Sprite>("Assets/Sprites/T_Square_Red.png");
+	square.addComponent<PlayerController>();
 }
 
 void Game::start()
@@ -49,7 +50,7 @@ void Game::start()
 
 void Game::handleEvents()
 {
-	SDL_Event event;
+
 	SDL_PollEvent(&event);
 	switch (event.type)
 	{
