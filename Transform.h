@@ -35,13 +35,19 @@ public:
 	void update() override
 	{
 		if (parent == nullptr) return;
-		
+
 		// Initialize local variables
 		Vector2D parentPosition = parent->position;
 		int parentRotation = parent->rotation;
 
+		// Set new position based on parent position
+		this->position = parentPosition + localPosition;
+
 		if (parentRotation != parentLastRotation)
 		{
+			//Reset parent position
+			parentPosition = parent->position;
+
 			// Set new position based on parent rotation
 			this->position = rotateAroundParent(position, parentPosition, parentRotation - parentLastRotation);
 
@@ -54,11 +60,6 @@ public:
 
 			// Update parent roation check
 			parentLastRotation = parent->rotation;
-		}
-		else
-		{
-			// Set new position based on parent position
-			this->position = parentPosition + localPosition;
 		}
 	}
 
@@ -75,6 +76,11 @@ public:
 		localRotation = rotation - parent->rotation;
 		parentLastRotation = parent->rotation;
 	}
+
+
+private:
+	Transform* parent = nullptr;
+	int parentLastRotation;
 
 	// Rotate around parent by a given angle in degrees
 	Vector2D rotateAroundParent(Vector2D point, Vector2D center, double angleDegrees) {
@@ -97,8 +103,4 @@ public:
 
 		return newPosition;
 	}
-
-private:
-	Transform* parent = nullptr;
-	int parentLastRotation;
 };

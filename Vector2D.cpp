@@ -12,6 +12,16 @@ Vector2D::Vector2D(float x, float y)
 	this->y = y;
 }
 
+// Dot product of two vectors
+float Vector2D::dotProduct(Vector2D u, Vector2D v) {
+	return u.x * v.x + u.y * v.y;
+}
+
+// Square of the magnitude of a vector
+float Vector2D::magnitudeSquared(Vector2D v) {
+	return v.x * v.x + v.y * v.y;
+}
+
 Vector2D& Vector2D::Add(const Vector2D& vec)
 {
 	this->x += vec.x;
