@@ -7,6 +7,9 @@ class PlayerController : public Component
 {
 public:
 	Transform* transform;
+	Vector2D velocity;
+
+	int speed = 3;
 
 	void init() override
 	{
@@ -15,18 +18,27 @@ public:
 
 	void update() override
 	{
+		transform->position.x += velocity.x * speed;
+		transform->position.y += velocity.y * speed;
+
 		if (Game::event.type == SDL_KEYDOWN)
 		{
 			switch (Game::event.key.keysym.sym)
 			{
 				case SDLK_SPACE:
-					transform->velocity.y = 1;
+					velocity.y = 1;
 					break;
 				case SDLK_RIGHT:
-					transform->velocity.x = 1;
+					velocity.x = 1;
 					break;
 				case SDLK_LEFT:
-					transform->velocity.x = -1;
+					velocity.x = -1;
+					break;
+				case SDLK_UP:
+					transform->rotation -= 90;
+					break;
+				case SDLK_DOWN:
+					transform->rotation += 90;
 					break;
 
 			default:
@@ -39,13 +51,13 @@ public:
 			switch (Game::event.key.keysym.sym)
 			{
 			case SDLK_SPACE:
-				transform->velocity.y = 0;
+				velocity.y = 0;
 				break;
 			case SDLK_RIGHT:
-				transform->velocity.x = 0;
+				velocity.x = 0;
 				break;
 			case SDLK_LEFT:
-				transform->velocity.x = 0;
+				velocity.x = 0;
 				break;
 
 			default:

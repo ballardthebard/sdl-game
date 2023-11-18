@@ -29,21 +29,26 @@ public:
 		destRect.w = 32;
 		destRect.x = 0;
 		destRect.y = 0;
+
+		flip = SDL_FLIP_NONE;
 	}
 
 	void update() override
 	{
 		destRect.x = (int)transform->position.x;
 		destRect.y = (int)transform->position.y;
+		rotation = (int)transform->rotation;
 	}
 
 	void draw() override
 	{
-		TextureManager::Draw(texture, srcRect, destRect);
+		TextureManager::Draw(texture, srcRect, destRect, rotation, NULL, flip);
 	}
 
 private:
 	Transform* transform;
 	SDL_Texture* texture;
 	SDL_Rect srcRect, destRect;
+	SDL_RendererFlip flip;
+	int rotation;
 };

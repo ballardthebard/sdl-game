@@ -5,7 +5,9 @@
 Manager manager;
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
-auto& square(manager.addEntity());
+
+auto& square1(manager.addEntity());
+auto& square2(manager.addEntity());
 
 Game::Game()
 {}
@@ -39,9 +41,17 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		}
 		isRunning = true;
 	}
-	square.addComponent<Transform>();
-	square.addComponent<Sprite>("Assets/Sprites/T_Square_Red.png");
-	square.addComponent<PlayerController>();
+	square1.addComponent<Transform>();
+	square1.getComponent<Transform>().position.x = 800 / 2 - 16;
+	square1.getComponent<Transform>().position.y = 600 / 2 - 16;
+	square1.addComponent<Sprite>("Assets/Sprites/T_Square_Red.png");
+	square1.addComponent<PlayerController>();
+
+	square2.addComponent<Transform>();
+	square2.getComponent<Transform>().position.x = 800 / 2 + 32 - 16;
+	square2.getComponent<Transform>().position.y = 600 / 2 - 16;
+	square2.addComponent<Sprite>("Assets/Sprites/T_Square_Blue.png");
+	square2.getComponent<Transform>().setParent(&square1.getComponent<Transform>());
 }
 
 void Game::start()

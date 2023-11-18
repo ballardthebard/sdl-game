@@ -1,2 +1,4 @@
 ﻿  Game.cpp
+C:\Projects\C++\technical-challange\Transform.h(90,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Projects\C++\technical-challange\Transform.h(91,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   technical-challange.vcxproj -> C:\Projects\C++\technical-challange\x64\Debug\technical-challange.exe

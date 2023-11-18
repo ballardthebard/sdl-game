@@ -16,7 +16,7 @@ inline ComponentID getComponentTypeID()
 	return lastID++;
 }
 
-// generates a unique ID for each component type using a static counter
+// Generates a unique ID for each component type using a static counter
 template <typename T> inline ComponentID getComponentTypeID() noexcept
 {
 	static ComponentID typeID = getComponentTypeID();
@@ -25,9 +25,9 @@ template <typename T> inline ComponentID getComponentTypeID() noexcept
 
 constexpr std::size_t maxComponents = 32;
 
-// track the existence of components in an entity
+// Track the existence of components in an entity
 using ComponentBitSet = std::bitset<maxComponents>;
-// array of pointers to components in an entity
+// Array of pointers to components in an entity
 using ComponentArray = std::array<Component*, maxComponents>;
 
 class Component
@@ -59,13 +59,13 @@ public:
 	
 	void destroy() { active = false; }
 
-	// checks if the entity has a specific component of type T
+	// Checks if the entity has a specific component of type T
 	template<typename T> bool hasComponent() const
 	{
 		return componentBitSet[getComponentTypeID<T>];
 	}
 
-	// adds a new component of type T to the entity
+	// Adds a new component of type T to the entity
 	template<typename T, typename... TArgs>
 	T& addComponent(TArgs&&... mArgs)
 	{
@@ -81,7 +81,7 @@ public:
 		return *c;
 	}
 
-	// retrieves a component of type T
+	// Retrieves a component of type T
 	template<typename T> T& getComponent() const
 	{
 		auto ptr(componentArray[getComponentTypeID<T>()]);
@@ -99,19 +99,19 @@ private:
 class Manager
 {
 public:
-	// updates all entities
+	// Updates all entities
 	void update()
 	{
 		for (auto& e : entities) e->update();
 	}
 
-	// draws all entities
+	// Draws all entities
 	void draw()
 	{
 		for (auto& e : entities) e->draw();
 	}
 
-	// removes inactive entities from the collection
+	// Removes inactive entities from the collection
 	void refresh()
 	{
 		entities.erase(std::remove_if(std::begin(entities), std::end(entities),
@@ -122,7 +122,7 @@ public:
 			std::end(entities));
 	}
 
-	// creates a new entity and adds it to the manager's collection
+	// Creates a new entity and adds it to the manager's collection
 	Entity& addEntity()
 	{
 		Entity* e = new Entity();
