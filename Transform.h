@@ -36,34 +36,27 @@ public:
 	{
 		if (parent == nullptr) return;
 
-		// Initialize local variables
-		Vector2D parentPosition = parent->position;
-		int parentRotation = parent->rotation;
-
 		// Set new position based on parent position
-		this->position = parentPosition + localPosition;
+		this->position = parent->position + localPosition;
 
-		if (parentRotation != parentLastRotation)
+		if (parent->rotation != parentLastRotation)
 		{
-			//Reset parent position
-			parentPosition = parent->position;
-
 			// Set new position based on parent rotation
-			this->position = rotateAroundParent(position, parentPosition, parentRotation - parentLastRotation);
+			this->position = rotateAroundParent(position, parent->position, parent->rotation - parentLastRotation);
 
 			// Update localPosition
 			Vector2D position = this->position;
-			localPosition = position - parentPosition;
+			localPosition = position - parent->position;
 
 			// Set new rotation according to parent
-			this->rotation = parentRotation + localRotation;
+			this->rotation = parent->rotation + localRotation;
 
 			// Update parent roation check
 			parentLastRotation = parent->rotation;
 		}
 	}
 
-	void setParent(Transform* parent)
+	void setParent(const Transform* parent)
 	{
 		if (parent == nullptr) return;
 
@@ -79,7 +72,7 @@ public:
 
 
 private:
-	Transform* parent = nullptr;
+	const Transform* parent = nullptr;
 	int parentLastRotation;
 
 	// Rotate around parent by a given angle in degrees
