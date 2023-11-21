@@ -49,15 +49,17 @@ public:
 	{
 		for (auto& c : components) c->update();
 	}
-	
-	void draw() 
+
+	void draw()
 	{
 		for (auto& c : components) c->draw();
 	}
-	
-	bool isActive() const { return active; }
-	
+
+	bool isDestroyed() const { return destroyed; }
 	void destroy() { active = false; }
+
+	bool isActive()const { return active; }
+	void setActive(bool state) { active = state; }
 
 	// Checks if the entity has a specific component of type T
 	template<typename T> bool hasComponent() const
@@ -90,6 +92,7 @@ public:
 
 private:
 	bool active = true;
+	bool destroyed = false;
 	std::vector<std::unique_ptr<Component>> components;
 
 	ComponentArray componentArray;
@@ -102,13 +105,21 @@ public:
 	// Updates all entities
 	void update()
 	{
-		for (auto& e : entities) e->update();
+		for (auto& e : entities)
+		{
+			if (e->isActive())
+				e->update();
+		}
 	}
 
 	// Draws all entities
 	void draw()
 	{
-		for (auto& e : entities) e->draw();
+		for (auto& e : entities)
+		{
+			if (e->isActive())
+				e->draw();
+		}
 	}
 
 	// Removes inactive entities from the collection
@@ -117,7 +128,7 @@ public:
 		entities.erase(std::remove_if(std::begin(entities), std::end(entities),
 			[](const std::unique_ptr<Entity>& mEntity)
 			{
-				return !mEntity->isActive();
+				return mEntity->isDestroyed();
 			}),
 			std::end(entities));
 	}
