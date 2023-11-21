@@ -19,6 +19,7 @@ public:
 	bool running() { return isRunning; }
 	static SDL_Renderer* renderer;
 	static SDL_Event event;
+	static float deltaTime;
 
 private:
 	bool isRunning;

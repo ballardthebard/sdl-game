@@ -5,9 +5,12 @@
 Manager manager;
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
+float Game::deltaTime = 0;
 
-auto& square1(manager.addEntity());
-auto& square2(manager.addEntity());
+auto& grid(manager.addEntity());
+auto& player(manager.addEntity());
+auto& block1(manager.addEntity());
+auto& block2(manager.addEntity());
 
 Game::Game()
 {}
@@ -41,17 +44,25 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		}
 		isRunning = true;
 	}
-	square1.addComponent<Transform>();
-	square1.getComponent<Transform>().position.x = 800 / 2 - 16;
-	square1.getComponent<Transform>().position.y = 600 / 2 - 16;
-	square1.addComponent<Sprite>("Assets/Sprites/T_Square_Red.png");
-	square1.addComponent<PlayerController>();
 
-	square2.addComponent<Transform>();
-	square2.getComponent<Transform>().position.x = 800 / 2 + 32 - 16;
-	square2.getComponent<Transform>().position.y = 600 / 2 - 16;
-	square2.addComponent<Sprite>("Assets/Sprites/T_Square_Blue.png");
-	square2.getComponent<Transform>().setParent(&square1.getComponent<Transform>());
+	grid.addComponent<Grid>();
+
+	player.addComponent<Transform>();
+	player.addComponent<PlayerController>();
+	player.getComponent<PlayerController>().setGrid(&grid.getComponent<Grid>());
+
+	block1.addComponent<Transform>();
+	block1.getComponent<Transform>().position.x = 800 / 2 - 16;
+	block1.getComponent<Transform>().position.y = 600 / 2 - 16;
+	block1.addComponent<Sprite>("Assets/Sprites/T_Square_Red.png");
+
+	block2.addComponent<Transform>();
+	block2.getComponent<Transform>().position.x = 800 / 2 + 32 - 16;
+	block2.getComponent<Transform>().position.y = 600 / 2 - 16;
+	block2.addComponent<Sprite>("Assets/Sprites/T_Square_Blue.png");
+
+	player.getComponent<PlayerController>().setBlocks(&block1.getComponent<Transform>(), &block2.getComponent<Transform>());
+
 }
 
 void Game::start()

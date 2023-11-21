@@ -1,6 +1,27 @@
 ﻿  Game.cpp
-C:\Projects\C++\technical-challange\Transform.h(96,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Projects\C++\technical-challange\Transform.h(97,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  Vector2D.cpp
-  Generating Code...
+C:\Projects\C++\technical-challange\Transform.h(89,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Projects\C++\technical-challange\Transform.h(90,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Projects\C++\technical-challange\Grid.h(20,33): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\Grid.h(30,67): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Projects\C++\technical-challange\Grid.h(31,67): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Projects\C++\technical-challange\Grid.h(40,18): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\Grid.h(40,26): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\Grid.h(54,15): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Projects\C++\technical-challange\Grid.h(69,24): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\Grid.h(69,42): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(27,37): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(27,86): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(73,48): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(80,41): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(81,41): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(90,41): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(91,41): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(102,41): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(112,41): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(122,41): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(132,41): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(145,41): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(154,41): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(163,41): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
+C:\Projects\C++\technical-challange\PlayerController.h(172,41): warning C4244: 'argument': conversion from 'float' to 'const unsigned __int64', possible loss of data
   technical-challange.vcxproj -> C:\Projects\C++\technical-challange\x64\Debug\technical-challange.exe

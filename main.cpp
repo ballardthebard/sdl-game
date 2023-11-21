@@ -6,27 +6,27 @@ int main(int argc, char* argv[])
 {
 	const int FPS = 60;
 	const int frameDelay = 1000 / FPS;
-	
-	Uint32 frameStart;
-	int frameTime;
+
+	Uint32 ticksCount = 0;
+	float timeElapsed;
 
 	game = new Game();
 	game->init("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
 
 	while (game->running())
 	{
-		frameStart = SDL_GetTicks();
-
 		game->handleEvents();
 		game->start();
 		game->update();
 		game->render();
 
-		frameTime = SDL_GetTicks() - frameStart;
+		timeElapsed = SDL_GetTicks() - ticksCount;
+		Game::deltaTime = timeElapsed / 1000.0f;
+		ticksCount = SDL_GetTicks();
 
-		if (frameDelay > frameTime) 
+		if (frameDelay > timeElapsed)
 		{
-			SDL_Delay(frameDelay - frameTime);
+			SDL_Delay(frameDelay - timeElapsed);
 		}
 	}
 
