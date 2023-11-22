@@ -2,13 +2,12 @@
 #include <vector>
 #include "Components.h"
 #include "Tile.h"
-#include "TileStatus.h"
 
 class Grid : public Component {
 public:
 	std::vector<int> lowestFreeTile;
 
-	Grid()
+	void init() override
 	{
 		initialPosition.x = 0;
 		initialPosition.y = 0;

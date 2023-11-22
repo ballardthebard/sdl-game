@@ -24,9 +24,6 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TextureManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,9 +33,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
@@ -68,8 +62,20 @@
     <ClInclude Include="Tile.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="TileStatus.h">
+    <ClInclude Include="Block.h">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockPool.h">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityPool.h">
+      <Filter>Source Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>Source Files\ECS</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

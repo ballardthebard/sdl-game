@@ -2,15 +2,13 @@
 #include "TextureManager.h"
 #include "Components.h"
 
-Manager manager;
+EntityManager entityManager;
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 float Game::deltaTime = 0;
 
-auto& grid(manager.addEntity());
-auto& player(manager.addEntity());
-auto& block1(manager.addEntity());
-auto& block2(manager.addEntity());
+auto& gridManager(entityManager.addEntity());
+auto& player(entityManager.addEntity());
 
 Game::Game()
 {}
@@ -45,24 +43,17 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		isRunning = true;
 	}
 
-	grid.addComponent<Grid>();
+	gridManager.addComponent<Grid>();
+	gridManager.addComponent<GameManager>();
+	gridManager.addComponent<Sprite>("Assets/Sprites/T_Grid.png", 256, 512, 0, 0);
 
 	player.addComponent<Transform>();
+	player.addComponent<BlockPool>();
 	player.addComponent<PlayerController>();
-	player.getComponent<PlayerController>().setGrid(&grid.getComponent<Grid>());
 
-	block1.addComponent<Transform>();
-	block1.getComponent<Transform>().position.x = 800 / 2 - 16;
-	block1.getComponent<Transform>().position.y = 600 / 2 - 16;
-	block1.addComponent<Sprite>("Assets/Sprites/T_Square_Red.png");
-
-	block2.addComponent<Transform>();
-	block2.getComponent<Transform>().position.x = 800 / 2 + 32 - 16;
-	block2.getComponent<Transform>().position.y = 600 / 2 - 16;
-	block2.addComponent<Sprite>("Assets/Sprites/T_Square_Blue.png");
-
-	player.getComponent<PlayerController>().setBlocks(&block1.getComponent<Transform>(), &block2.getComponent<Transform>());
-
+	player.getComponent<BlockPool>().initPool(&entityManager, 384);
+	player.getComponent<PlayerController>().setGridManager(&gridManager);
+	player.getComponent<PlayerController>().setBlocks();
 }
 
 void Game::start()
@@ -86,14 +77,14 @@ void Game::handleEvents()
 
 void Game::update()
 {
-	manager.refresh();
-	manager.update();
+	entityManager.refresh();
+	entityManager.update();
 }
 
 void Game::render()
 {
 	SDL_RenderClear(renderer);
-	manager.draw();
+	entityManager.draw();
 	SDL_RenderPresent(renderer);
 }
 

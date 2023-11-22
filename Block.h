@@ -8,9 +8,8 @@ public:
 	int score = 0;
 	Color color;
 
-	Block(Color color, int score)
+	Block(Color color)
 	{
 		this->color = color;
-		this->score = score;
 	}
 };

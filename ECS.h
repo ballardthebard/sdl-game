@@ -99,7 +99,7 @@ private:
 	ComponentBitSet componentBitSet;
 };
 
-class Manager
+class EntityManager
 {
 public:
 	// Updates all entities

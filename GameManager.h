@@ -1,11 +1,18 @@
 #pragma once
 #include "Components.h"
 
-class GameManager
+class GameManager : public Component
 {
 public:
-	GameManager(Grid* grid);
-	void validatedMatches();
+	void init() override 
+	{
+		grid = &entity->getComponent<Grid>();
+	}
+	
+	void validatedMatches() 
+	{
+	
+	}
 
 private:
 	Grid* grid;

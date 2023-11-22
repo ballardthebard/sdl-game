@@ -2,6 +2,8 @@
 #include "Components.h"
 #include "Vector2D.h"
 
+#define M_PI 3.14159265358979323846
+
 class Transform : public Component
 {
 public:
@@ -58,7 +60,11 @@ public:
 
 	void setParent(const Transform* parent)
 	{
-		if (parent == nullptr) return;
+		if (parent == nullptr)
+		{
+			this->parent = nullptr;
+			return;
+		}
 
 		this->parent = parent;
 

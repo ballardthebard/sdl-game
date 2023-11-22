@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Dev\SDL2_image\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Dev\SDL2_ttf\include;C:\Dev\SDL2_image\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Dev\SDL2_image\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -113,8 +113,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Dev\SDL2_image\lib\x64;C:\Dev\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Dev\SDL2_ttf\lib\x64;C:\Dev\SDL2_image\lib\x64;C:\Dev\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,22 +135,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Block.h" />
+    <ClInclude Include="BlockPool.h" />
+    <ClInclude Include="EntityPool.h" />
+    <ClInclude Include="Color.h" />
     <ClInclude Include="Components.h" />
     <ClInclude Include="ECS.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Grid.h" />
-    <ClInclude Include="TileStatus.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vector2D.h" />
   </ItemGroup>
