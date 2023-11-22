@@ -19,7 +19,8 @@ public:
 	{
 		transform->position.y += velocity.y * speed;
 		fall();
-		rapidFall();
+		rapidFall(blockA);
+		rapidFall(blockB);
 		inputEvents();
 	}
 
@@ -73,7 +74,7 @@ private:
 
 	bool canMove = true;
 
-	void fall() 
+	void fall()
 	{
 		if (!isRapidFalling)
 			fallCurrentTime += Game::deltaTime;
@@ -95,15 +96,14 @@ private:
 		}
 	}
 
-	void rapidFall()
+	void rapidFall(Transform* blockTransform)
 	{
 		if (isRapidFalling)
 		{
 			if (fallInitialPosition != 0)
 			{
-				if (transform->position.y - fallInitialPosition < tileHeight
-					&& grid->isObjectOnTile(blockA, 0, 1)
-					&& grid->isObjectOnTile(blockB, 0, 1))
+				if (blockTransform->position.y - fallInitialPosition < tileHeight
+					&& grid->isObjectOnFreeTile(blockTransform, 0, 1))
 				{
 					velocity.y = 1;
 				}
@@ -112,14 +112,13 @@ private:
 					aGridPos.y++;
 					bGridPos.y++;
 
-					if (grid->isObjectOnTile(blockA, 0, 1)
-						&& grid->isObjectOnTile(blockB, 0, 1))
+					if (grid->isObjectOnFreeTile(blockTransform, 0, 1))
 					{
 						fallInitialPosition += tileHeight;
 					}
 					else
 					{
-						transform->position.y += fallInitialPosition - transform->position.y;
+						blockTransform->position.y += fallInitialPosition - blockTransform->position.y;
 
 						velocity.y = 0;
 						isRapidFalling = false;
@@ -128,10 +127,9 @@ private:
 			}
 			else
 			{
-				if (grid->isObjectOnTile(blockA, 0, 1)
-					&& grid->isObjectOnTile(blockB, 0, 1))
+				if (grid->isObjectOnFreeTile(blockTransform, 0, 1))
 				{
-					fallInitialPosition = transform->position.y;
+					fallInitialPosition = blockTransform->position.y;
 				}
 			}
 		}
@@ -143,108 +141,61 @@ private:
 		{
 			switch (Game::event.key.keysym.sym)
 			{
+			case SDLK_p:
+				std::cout << "X: " << blockB->position.x << std::endl;
+				std::cout << "Y: " << blockB->position.y << std::endl;
+				break;
 			case SDLK_SPACE:
 				isRapidFalling = true;
 				break;
 			case SDLK_RIGHT:
-				if (aGridPos.x + 1 < grid->lowestFreeTile.size() && bGridPos.x + 1 < grid->lowestFreeTile.size()
-					&& grid->lowestFreeTile[aGridPos.x + 1] > aGridPos.y
-					&& grid->lowestFreeTile[bGridPos.x + 1] > bGridPos.y)
+				if (grid->isObjectOnFreeTile(blockA, 1, 0) && grid->isObjectOnFreeTile(blockB, 1, 0))
 				{
 					transform->position.x += tileWidth;
-					aGridPos.x++;
-					bGridPos.x++;
 				}
 				break;
 			case SDLK_LEFT:
-				if (aGridPos.x - 1 >= 0 && bGridPos.x - 1 >= 0
-					&& grid->lowestFreeTile[aGridPos.x - 1] > aGridPos.y
-					&& grid->lowestFreeTile[bGridPos.x - 1] > bGridPos.y)
+				if (grid->isObjectOnFreeTile(blockA, -1, 0) && grid->isObjectOnFreeTile(blockB, -1, 0))
 				{
 					transform->position.x -= tileWidth;
-					aGridPos.x--;
-					bGridPos.x--;
 				}
 				break;
 			case SDLK_UP:
-				if (aGridPos.x < bGridPos.x
-					&& bGridPos.x - 1 >= 0
-					&& bGridPos.y - 1 >= 0
-					&& grid->lowestFreeTile[bGridPos.x - 1] > bGridPos.y)
+				if (blockA->position.x < blockB->position.x && grid->isObjectOnFreeTile(blockB, -1, -1))
 				{
-					bGridPos.x--;
-					bGridPos.y--;
+					transform->rotation -= 90;
+				}
+				else if (blockA->position.x > blockB->position.x && grid->isObjectOnFreeTile(blockB, 1, 1))
+				{
 					transform->rotation -= 90;
 
 				}
-				else if (aGridPos.x > bGridPos.x
-					&& bGridPos.x + 1 < grid->lowestFreeTile.size()
-					&& bGridPos.y + 1 < 16
-					&& grid->lowestFreeTile[bGridPos.x + 1] > bGridPos.y)
+				else if (blockA->position.y < blockB->position.y && grid->isObjectOnFreeTile(blockB, 1, -1))
 				{
-					bGridPos.x++;
-					bGridPos.y++;
 					transform->rotation -= 90;
-
 				}
-				else if (aGridPos.y < bGridPos.y
-					&& bGridPos.x + 1 < grid->lowestFreeTile.size()
-					&& bGridPos.y - 1 >= 0
-					&& grid->lowestFreeTile[bGridPos.x + 1] >= bGridPos.y - 1)
+				else if (blockA->position.y > blockB->position.y && grid->isObjectOnFreeTile(blockB, -1, 1))
 				{
-					bGridPos.x++;
-					bGridPos.y--;
 					transform->rotation -= 90;
-
-				}
-				else if (aGridPos.y > bGridPos.y
-					&& bGridPos.x - 1 >= 0
-					&& bGridPos.y + 1 < 16
-					&& grid->lowestFreeTile[bGridPos.x - 1] >= bGridPos.y + 1)
-				{
-					bGridPos.x--;
-					bGridPos.y++;
-					transform->rotation -= 90;
-
 				}
 				break;
 			case SDLK_DOWN:
 
-				if (aGridPos.x < bGridPos.x
-					&& bGridPos.x - 1 >= 0
-					&& bGridPos.y + 1 < 16
-					&& grid->lowestFreeTile[bGridPos.x - 1] >= bGridPos.y + 1)
+				if (blockA->position.x < blockB->position.x && grid->isObjectOnFreeTile(blockB, -1, 1))
 				{
 					transform->rotation += 90;
-					bGridPos.x--;
-					bGridPos.y++;
 				}
-				else if (aGridPos.x > bGridPos.x
-					&& bGridPos.x + 1 < grid->lowestFreeTile.size()
-					&& bGridPos.y - 1 >= 0
-					&& grid->lowestFreeTile[bGridPos.x + 1] >= bGridPos.y - 1)
+				else if (blockA->position.x > blockB->position.x && grid->isObjectOnFreeTile(blockB, 1, -1))
 				{
 					transform->rotation += 90;
-					bGridPos.x++;
-					bGridPos.y--;
 				}
-				else if (aGridPos.y < bGridPos.y
-					&& bGridPos.x - 1 >= 0
-					&& bGridPos.y + 1 < 16
-					&& grid->lowestFreeTile[bGridPos.x - 1] > bGridPos.y)
+				else if (blockA->position.y < blockB->position.y && grid->isObjectOnFreeTile(blockB, -1, -1))
 				{
 					transform->rotation += 90;
-					bGridPos.x--;
-					bGridPos.y--;
 				}
-				else if (aGridPos.y > bGridPos.y
-					&& bGridPos.x + 1 < grid->lowestFreeTile.size()
-					&& bGridPos.y + 1 < 16
-					&& grid->lowestFreeTile[bGridPos.x + 1] > bGridPos.y)
+				else if (blockA->position.y > blockB->position.y && grid->isObjectOnFreeTile(blockB, 1, 1))
 				{
 					transform->rotation += 90;
-					bGridPos.x++;
-					bGridPos.y++;
 				}
 				break;
 
@@ -260,14 +211,10 @@ private:
 			case SDLK_SPACE:
 				if (isRapidFalling)
 				{
-
 					isRapidFalling = false;
 
 					transform->position.y += tileHeight - (transform->position.y - fallInitialPosition);
 					velocity.y = 0;
-
-					aGridPos.y++;
-					bGridPos.y++;
 				}
 				break;
 			default:

@@ -3,6 +3,7 @@
 #include "Vector2D.h"
 
 #define M_PI 3.14159265358979323846
+#define EPSILON 1.192092896e-07F
 
 class Transform : public Component
 {
@@ -88,12 +89,18 @@ private:
 		double sinTheta = sin(angleRadians);
 
 		// Translate the point relative to the center
-		float translatedX = point.x - center.x;
-		float translatedY = point.y - center.y;
+		double translatedX = point.x - center.x;
+		double translatedY = point.y - center.y;
 
 		// Apply rotation formula around the center point
-		float newX = translatedX * cosTheta - translatedY * sinTheta;
-		float newY = translatedX * sinTheta + translatedY * cosTheta;
+		double newX = translatedX * cosTheta - translatedY * sinTheta;
+		double newY = translatedX * sinTheta + translatedY * cosTheta;
+
+		// Deal with precision errors in floating-point arithmetic
+		if (newX < EPSILON && newX > -EPSILON)
+			newX = 0;
+		if (newY < EPSILON && newY > -EPSILON)
+			newY = 0;
 
 		// Translate back to the original coordinates and return the rotated point
 		Vector2D newPosition;

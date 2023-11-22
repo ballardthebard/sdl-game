@@ -15,13 +15,13 @@ public:
 		tileSize.y = 32;
 		numTiles.x = 8;
 		numTiles.y = 16;
-		
+
 		lowestFreeTile.resize(numTiles.x);
 		initializeTilesVector();
 		setLowestFreeTile();
 	}
 
-	bool isObjectOnTile(const Transform* obj, int xOffset, int yOffset) {
+	bool isObjectOnFreeTile(const Transform* obj, int xOffset, int yOffset) {
 		if (obj == nullptr) return false; // Handle null pointer case
 
 		// Calculate the tile indices based on the object's position
@@ -32,6 +32,8 @@ public:
 		tile.x += xOffset;
 		tile.y += yOffset;
 
+		std::cout << "X: " << tile.x << std::endl;
+		std::cout << "Y: " << tile.y << std::endl;
 		// Check if the calculated indices are within the valid range
 		if (tile.x >= 0 && tile.x < numTiles.x && tile.y >= 0 && tile.y < numTiles.y)
 		{
