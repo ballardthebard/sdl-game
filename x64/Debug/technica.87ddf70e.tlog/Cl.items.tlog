@@ -1,4 +1,12 @@
+C:\Projects\C++\technical-challange\Block.cpp;C:\Projects\C++\technical-challange\x64\Debug\Block.obj
+C:\Projects\C++\technical-challange\BlockPool.cpp;C:\Projects\C++\technical-challange\x64\Debug\BlockPool.obj
+C:\Projects\C++\technical-challange\EntityPool.cpp;C:\Projects\C++\technical-challange\x64\Debug\EntityPool.obj
 C:\Projects\C++\technical-challange\Game.cpp;C:\Projects\C++\technical-challange\x64\Debug\Game.obj
+C:\Projects\C++\technical-challange\GameManager.cpp;C:\Projects\C++\technical-challange\x64\Debug\GameManager.obj
+C:\Projects\C++\technical-challange\Grid.cpp;C:\Projects\C++\technical-challange\x64\Debug\Grid.obj
 C:\Projects\C++\technical-challange\main.cpp;C:\Projects\C++\technical-challange\x64\Debug\main.obj
+C:\Projects\C++\technical-challange\PlayerController.cpp;C:\Projects\C++\technical-challange\x64\Debug\PlayerController.obj
+C:\Projects\C++\technical-challange\Sprite.cpp;C:\Projects\C++\technical-challange\x64\Debug\Sprite.obj
 C:\Projects\C++\technical-challange\TextureManager.cpp;C:\Projects\C++\technical-challange\x64\Debug\TextureManager.obj
+C:\Projects\C++\technical-challange\Transform.cpp;C:\Projects\C++\technical-challange\x64\Debug\Transform.obj
 C:\Projects\C++\technical-challange\Vector2D.cpp;C:\Projects\C++\technical-challange\x64\Debug\Vector2D.obj

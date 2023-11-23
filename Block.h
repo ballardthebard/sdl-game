@@ -1,6 +1,8 @@
 #pragma once
-#include "Components.h"
+#include "ECS.h"
 #include "Color.h"
+
+class Transform;
 
 class Block : public Component
 {
@@ -8,17 +10,12 @@ public:
 	Color color;
 	Transform* transform;
 
-	bool isFalling;
+	bool isFalling = false;
 	int fallInitialPosition = 0;
 	int score = 0;
 
-	Block(Color color)
-	{
-		this->color = color;
-	}
+	Block(Color color);
+	~Block();
 
-	void init() override
-	{
-		transform = &entity->getComponent<Transform>();
-	}
+	void init() override;
 };

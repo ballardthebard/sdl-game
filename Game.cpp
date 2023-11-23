@@ -1,6 +1,11 @@
 #include "Game.h"
 #include "TextureManager.h"
-#include "Components.h"
+#include "Grid.h"
+#include "GameManager.h"
+#include "Sprite.h"
+#include "PlayerController.h"
+#include "BlockPool.h"
+#include "Transform.h"
 
 EntityManager entityManager;
 SDL_Renderer* Game::renderer = nullptr;
