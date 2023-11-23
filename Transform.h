@@ -77,6 +77,12 @@ public:
 		parentLastRotation = parent->rotation;
 	}
 
+	bool hasParent()
+	{
+		if (parent == nullptr) return false;
+
+		return true;
+	}
 
 private:
 	const Transform* parent = nullptr;

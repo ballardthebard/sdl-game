@@ -5,10 +5,6 @@
 class PlayerController : public Component
 {
 public:
-	int speed = 3;
-	int tileWidth = 32;
-	int tileHeight = 32;
-
 	void init() override
 	{
 		transform = &entity->getComponent<Transform>();
@@ -17,40 +13,53 @@ public:
 
 	void update() override
 	{
-		transform->position.y += velocity.y * speed;
 		fall();
-		rapidFall(blockA);
-		rapidFall(blockB);
+
 		inputEvents();
 	}
 
-	void setGridManager(Entity* gridManager)
+	bool repositionBlocks(std::vector<Block*> activeBlocks)
+	{
+		bool isFalling = false;
+		for (int i = 0; i < activeBlocks.size(); ++i)
+		{
+			if (!isFalling)
+				isFalling = rapidFall(activeBlocks[i]);
+			else
+				rapidFall(activeBlocks[i]);
+		}
+
+		return isFalling;
+	}
+
+	void setGridAndManager(Entity* gridManager)
 	{
 		this->grid = &gridManager->getComponent<Grid>();
 		this->gameManager = &gridManager->getComponent<GameManager>();
 	}
 
+
 	void setBlocks()
 	{
 		if (blockPool == nullptr) return;
 
-		blockA = &blockPool->getEntity()->getComponent<Transform>();
-		blockB = &blockPool->getEntity()->getComponent<Transform>();
+		transform->position.x = 0;
+		transform->position.y = 0;
+
+		blockA = &blockPool->getEntity()->getComponent<Block>();
+		blockB = &blockPool->getEntity()->getComponent<Block>();
 
 		blockA->entity->setActive(true);
 		blockB->entity->setActive(true);
 
-		blockA->position = transform->position;
-		blockB->position = transform->position;
-		blockB->position.x += tileWidth;
+		blockA->transform->position = transform->position;
+		blockB->transform->position = transform->position;
+		blockB->transform->position.x += tileWidth;
 
-		blockA->setParent(transform);
-		blockB->setParent(transform);
+		blockA->transform->setParent(transform);
+		blockB->transform->setParent(transform);
 
-		aGridPos.x = 0;
-		aGridPos.y = 0;
-		bGridPos.x = 1;
-		bGridPos.y = 0;
+		canMove = true;
 	}
 
 private:
@@ -59,80 +68,121 @@ private:
 	GameManager* gameManager;
 
 	Transform* transform;
-	Vector2D velocity;
-	Transform* blockA;
-	Transform* blockB;
+	Block* blockA;
+	Block* blockB;
 
-	Vector2D aGridPos;
-	Vector2D bGridPos;
+	int tileWidth = 32;
+	int tileHeight = 32;
 
 	int fallInitialPosition;
-	bool isRapidFalling;
-
+	int fallVelocity = 3;
 	float fallTime = 2;
 	float fallCurrentTime = 0;
 
 	bool canMove = true;
 
+	void fallGrid()
+	{
+
+	}
+
 	void fall()
 	{
-		if (!isRapidFalling)
+		bool aFall = rapidFall(blockA);
+		bool bFall = rapidFall(blockB);
+
+		if (aFall || bFall)
+		{
+			return;
+		}
+		else if (!canMove)
+		{
+			Vector2D gridPosA = grid->getGridPosition(blockA->transform);
+			Vector2D gridPosB = grid->getGridPosition(blockB->transform);
+
+			grid->tiles[gridPosA.x][gridPosA.y].block = blockA;
+			grid->tiles[gridPosB.x][gridPosB.y].block = blockB;
+
+			blockA->transform->setParent(nullptr);
+			blockB->transform->setParent(nullptr);
+
+			gameManager->validateMatches = true;
+		}
+
+		if (!blockA->isFalling && !blockB->isFalling)
 			fallCurrentTime += Game::deltaTime;
 
 		if (fallCurrentTime > fallTime)
 		{
 			fallCurrentTime = 0;
 
-			if (grid->lowestFreeTile[aGridPos.x] > aGridPos.y && grid->lowestFreeTile[bGridPos.x] > bGridPos.y)
+			if (grid->isObjectOnFreeTile(blockA->transform, 0, 1) && grid->isObjectOnFreeTile(blockB->transform, 0, 1))
 			{
 				transform->position.y += tileHeight;
-				aGridPos.y++;
-				bGridPos.y++;
 			}
 			else
 			{
 				canMove = false;
+				blockA->isFalling = true;
+				blockB->isFalling = true;
 			}
 		}
 	}
 
-	void rapidFall(Transform* blockTransform)
+	bool rapidFall(Block* block)
 	{
-		if (isRapidFalling)
+		if (block->isFalling)
 		{
-			if (fallInitialPosition != 0)
+			if (block->fallInitialPosition != 0)
 			{
-				if (blockTransform->position.y - fallInitialPosition < tileHeight
-					&& grid->isObjectOnFreeTile(blockTransform, 0, 1))
+				if (block->transform->position.y - block->fallInitialPosition < tileHeight)
 				{
-					velocity.y = 1;
+					if (block->transform->hasParent())
+						block->transform->localPosition.y += fallVelocity;
+					else
+						block->transform->position.y += fallVelocity;
+
+					return true;
+				}
+				else if (grid->isObjectOnFreeTile(block->transform, 0, 1))
+				{
+					block->fallInitialPosition += tileHeight;
+					return true;
 				}
 				else
 				{
-					aGridPos.y++;
-					bGridPos.y++;
+					int gridCorrection = block->fallInitialPosition - block->transform->position.y;
 
-					if (grid->isObjectOnFreeTile(blockTransform, 0, 1))
-					{
-						fallInitialPosition += tileHeight;
-					}
+					if (block->transform->hasParent())
+						block->transform->localPosition.y += gridCorrection;
 					else
-					{
-						blockTransform->position.y += fallInitialPosition - blockTransform->position.y;
+						block->transform->position.y += gridCorrection;
 
-						velocity.y = 0;
-						isRapidFalling = false;
-					}
+					block->isFalling = false;
+					canMove = false;
 				}
 			}
-			else
+			else if (grid->isObjectOnFreeTile(block->transform, 0, 1))
 			{
-				if (grid->isObjectOnFreeTile(blockTransform, 0, 1))
-				{
-					fallInitialPosition = blockTransform->position.y;
-				}
+				block->fallInitialPosition = block->transform->position.y;
+				return true;
 			}
+
 		}
+		else if (block->fallInitialPosition != 0)
+		{
+			int gridCorrection = tileHeight - (block->transform->position.y - block->fallInitialPosition);
+
+			if (block->transform->hasParent())
+				block->transform->localPosition.y += gridCorrection;
+			else
+				block->transform->position.y += gridCorrection;
+
+			block->isFalling = false;
+			block->fallInitialPosition = 0;
+		}
+
+		return false;
 	}
 
 	void inputEvents()
@@ -141,59 +191,56 @@ private:
 		{
 			switch (Game::event.key.keysym.sym)
 			{
-			case SDLK_p:
-				std::cout << "X: " << blockB->position.x << std::endl;
-				std::cout << "Y: " << blockB->position.y << std::endl;
-				break;
 			case SDLK_SPACE:
-				isRapidFalling = true;
+				blockA->isFalling = true;
+				blockB->isFalling = true;
 				break;
 			case SDLK_RIGHT:
-				if (grid->isObjectOnFreeTile(blockA, 1, 0) && grid->isObjectOnFreeTile(blockB, 1, 0))
+				if (grid->isObjectOnFreeTile(blockA->transform, 1, 0) && grid->isObjectOnFreeTile(blockB->transform, 1, 0))
 				{
 					transform->position.x += tileWidth;
 				}
 				break;
 			case SDLK_LEFT:
-				if (grid->isObjectOnFreeTile(blockA, -1, 0) && grid->isObjectOnFreeTile(blockB, -1, 0))
+				if (grid->isObjectOnFreeTile(blockA->transform, -1, 0) && grid->isObjectOnFreeTile(blockB->transform, -1, 0))
 				{
 					transform->position.x -= tileWidth;
 				}
 				break;
 			case SDLK_UP:
-				if (blockA->position.x < blockB->position.x && grid->isObjectOnFreeTile(blockB, -1, -1))
+				if (blockA->transform->position.x < blockB->transform->position.x && grid->isObjectOnFreeTile(blockB->transform, -1, -1))
 				{
 					transform->rotation -= 90;
 				}
-				else if (blockA->position.x > blockB->position.x && grid->isObjectOnFreeTile(blockB, 1, 1))
+				else if (blockA->transform->position.x > blockB->transform->position.x && grid->isObjectOnFreeTile(blockB->transform, 1, 1))
 				{
 					transform->rotation -= 90;
 
 				}
-				else if (blockA->position.y < blockB->position.y && grid->isObjectOnFreeTile(blockB, 1, -1))
+				else if (blockA->transform->position.y < blockB->transform->position.y && grid->isObjectOnFreeTile(blockB->transform, 1, -1))
 				{
 					transform->rotation -= 90;
 				}
-				else if (blockA->position.y > blockB->position.y && grid->isObjectOnFreeTile(blockB, -1, 1))
+				else if (blockA->transform->position.y > blockB->transform->position.y && grid->isObjectOnFreeTile(blockB->transform, -1, 1))
 				{
 					transform->rotation -= 90;
 				}
 				break;
 			case SDLK_DOWN:
 
-				if (blockA->position.x < blockB->position.x && grid->isObjectOnFreeTile(blockB, -1, 1))
+				if (blockA->transform->position.x < blockB->transform->position.x && grid->isObjectOnFreeTile(blockB->transform, -1, 1))
 				{
 					transform->rotation += 90;
 				}
-				else if (blockA->position.x > blockB->position.x && grid->isObjectOnFreeTile(blockB, 1, -1))
+				else if (blockA->transform->position.x > blockB->transform->position.x && grid->isObjectOnFreeTile(blockB->transform, 1, -1))
 				{
 					transform->rotation += 90;
 				}
-				else if (blockA->position.y < blockB->position.y && grid->isObjectOnFreeTile(blockB, -1, -1))
+				else if (blockA->transform->position.y < blockB->transform->position.y && grid->isObjectOnFreeTile(blockB->transform, -1, -1))
 				{
 					transform->rotation += 90;
 				}
-				else if (blockA->position.y > blockB->position.y && grid->isObjectOnFreeTile(blockB, 1, 1))
+				else if (blockA->transform->position.y > blockB->transform->position.y && grid->isObjectOnFreeTile(blockB->transform, 1, 1))
 				{
 					transform->rotation += 90;
 				}
@@ -209,13 +256,8 @@ private:
 			switch (Game::event.key.keysym.sym)
 			{
 			case SDLK_SPACE:
-				if (isRapidFalling)
-				{
-					isRapidFalling = false;
-
-					transform->position.y += tileHeight - (transform->position.y - fallInitialPosition);
-					velocity.y = 0;
-				}
+				blockA->isFalling = false;
+				blockA->isFalling = false;
 				break;
 			default:
 				break;

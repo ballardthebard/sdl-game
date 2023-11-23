@@ -7,7 +7,7 @@ SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 float Game::deltaTime = 0;
 
-auto& gridManager(entityManager.addEntity());
+auto& grid(entityManager.addEntity());
 auto& player(entityManager.addEntity());
 
 Game::Game()
@@ -43,17 +43,20 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		isRunning = true;
 	}
 
-	gridManager.addComponent<Grid>();
-	gridManager.addComponent<GameManager>();
-	gridManager.addComponent<Sprite>("Assets/Sprites/T_Grid.png", 256, 512, 0, 0);
+	grid.addComponent<Grid>();
+	grid.addComponent<GameManager>();
+	grid.addComponent<Sprite>("Assets/Sprites/T_Grid.png", 256, 512, 0, 0);
 
 	player.addComponent<Transform>();
 	player.addComponent<BlockPool>();
 	player.addComponent<PlayerController>();
 
 	player.getComponent<BlockPool>().initPool(&entityManager, 384);
-	player.getComponent<PlayerController>().setGridManager(&gridManager);
 	player.getComponent<PlayerController>().setBlocks();
+
+	grid.getComponent<GameManager>().setPlayerAndPool(&player);
+	player.getComponent<PlayerController>().setGridAndManager(&grid);
+
 }
 
 void Game::start()

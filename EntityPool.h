@@ -35,9 +35,9 @@ public:
 		return block;
 	}
 
-	void addEntity(Entity& entity)
+	void addEntity(Entity* entity)
 	{
-		entityPool.push_back(&entity);
+		entityPool.push_back(entity);
 	}
 
 protected:

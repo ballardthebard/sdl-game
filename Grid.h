@@ -6,6 +6,8 @@
 class Grid : public Component {
 public:
 	std::vector<int> lowestFreeTile;
+	std::vector<std::vector<Tile>> tiles;
+	Vector2D numTiles;
 
 	void init() override
 	{
@@ -24,16 +26,11 @@ public:
 	bool isObjectOnFreeTile(const Transform* obj, int xOffset, int yOffset) {
 		if (obj == nullptr) return false; // Handle null pointer case
 
-		// Calculate the tile indices based on the object's position
-		Vector2D tile;
-		tile.x = static_cast<int>((obj->position.x - initialPosition.x) / tileSize.x);
-		tile.y = static_cast<int>((obj->position.y - initialPosition.y) / tileSize.y);
+		Vector2D tile = getGridPosition(obj);
 
 		tile.x += xOffset;
 		tile.y += yOffset;
 
-		std::cout << "X: " << tile.x << std::endl;
-		std::cout << "Y: " << tile.y << std::endl;
 		// Check if the calculated indices are within the valid range
 		if (tile.x >= 0 && tile.x < numTiles.x && tile.y >= 0 && tile.y < numTiles.y)
 		{
@@ -63,6 +60,16 @@ public:
 		}
 	}
 
+	Vector2D getGridPosition(const Transform* obj)
+	{
+		// Calculate the tile indices based on the object's position
+		Vector2D tile;
+		tile.x = static_cast<int>((obj->position.x - initialPosition.x) / tileSize.x);
+		tile.y = static_cast<int>((obj->position.y - initialPosition.y) / tileSize.y);
+
+		return tile;
+	}
+
 	bool isTileFree(Vector2D tile, int xOffset, int yOffset)
 	{
 		if (tile.x >= 0 && tile.x < numTiles.x && tile.y >= 0 && tile.y < numTiles.y)
@@ -90,8 +97,7 @@ public:
 private:
 	Vector2D initialPosition;
 	Vector2D tileSize;
-	Vector2D numTiles;
-	std::vector<std::vector<Tile>> tiles;
+
 
 	void initializeTilesVector()
 	{
