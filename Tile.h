@@ -4,7 +4,7 @@
 class Tile {
 public:
     bool isOccupied;
-    Block* block;
+    Block* block = nullptr;
 
     Tile() : isOccupied(false) {}
 };

@@ -16,7 +16,7 @@ void EntityPool::initPool(EntityManager* entityManager, int poolSize)
 Entity* EntityPool::getEntity()
 {
 	// Generate random index
-	int i = randomRange(0, entityPool.size());
+	int i = randomRange(0, entityPool.size() - 1);
 
 	// No available entity in the pool
 	if (entityPool[i] == nullptr) return nullptr;

@@ -1,15 +1,24 @@
 #include "GameManager.h"
+#include <queue>
+#include <unordered_set> 
+#include <algorithm>
+#include <vector>
 #include "Grid.h"
 #include "BlockPool.h"
 #include "PlayerController.h"
 #include "Block.h"
 
-GameManager::GameManager() {}
+
+GameManager::GameManager()
+{
+	activeBlocks = std::vector<Block*>();
+}
 GameManager::~GameManager() {}
 
 void GameManager::init()
 {
 	grid = &entity->getComponent<Grid>();
+
 }
 
 void GameManager::update()
@@ -31,109 +40,138 @@ void GameManager::setPlayerAndPool(Entity* entity)
 	blockPool = &entity->getComponent<BlockPool>();
 }
 
-void GameManager::addPlacedBlock(Block* block)
-{
-	activeBlocks.push_back(block);
+// Function to add a block reference to activeBlocks
+void GameManager::addPlacedBlock(Block* block) {
+	auto it = std::find(activeBlocks.begin(), activeBlocks.end(), block);
+	if (it == activeBlocks.end()) {
+		activeBlocks.push_back(block);
+	}
 }
 
 void GameManager::validatedMatches()
 {
-	// Update scores and find matches
 	for (int i = 0; i < activeBlocks.size(); ++i)
 	{
-		Vector2D gridPos = grid->getGridPosition(activeBlocks[i]->transform);
+		updateScoreRecursively(activeBlocks[i]);
+	}
 
-		if (gridPos.y - 1 >= 0)
+	repositioningBlocks = false;
+	for (int i = 0; i < activeBlocks.size(); ++i)
+	{
+		if (activeBlocks[i]->score >= 4)
 		{
-			updateScore(activeBlocks[i], grid->tiles[gridPos.x][gridPos.y - 1].block);
+			// Get current block grid position
+			Vector2D gridPos = grid->getGridPosition(activeBlocks[i]->transform);
 
-			if (activeBlocks[i]->score >= 4)
-			{
-				matchedBlocks.push_back(activeBlocks[i]);
-				matchedBlocks.push_back(grid->tiles[gridPos.x][gridPos.y - 1].block);
-			}
-		}
+			// Return block to pool
+			activeBlocks[i]->score = 0;
+			activeBlocks[i]->entity->setActive(false);
 
-		if (gridPos.y + 1 <= grid->numTiles.y - 1)
-		{
-			updateScore(activeBlocks[i], grid->tiles[gridPos.x][gridPos.y + 1].block);
+			blockPool->addEntity(activeBlocks[i]->entity);
 
-			if (activeBlocks[i]->score >= 4)
-			{
-				matchedBlocks.push_back(activeBlocks[i]);
-				matchedBlocks.push_back(grid->tiles[gridPos.x][gridPos.y + 1].block);
-			}
-		}
+			// Remove block from grid
+			grid->freeColumn(gridPos.x);
 
-		if (gridPos.x - 1 >= 0)
-		{
-			updateScore(activeBlocks[i], grid->tiles[gridPos.x - 1][gridPos.y].block);
+			// Remove block from activeBlocks
+			activeBlocks.erase(activeBlocks.begin() + i);
+			player->totalPlacedBlocks--;
 
-			if (activeBlocks[i]->score >= 4)
-			{
-				matchedBlocks.push_back(activeBlocks[i]);
-				matchedBlocks.push_back(grid->tiles[gridPos.x - 1][gridPos.y].block);
-			}
-		}
-
-		if (gridPos.x + 1 <= grid->numTiles.x - 1)
-		{
-			updateScore(activeBlocks[i], grid->tiles[gridPos.x + 1][gridPos.y].block);
-
-			if (activeBlocks[i]->score >= 4)
-			{
-				matchedBlocks.push_back(activeBlocks[i]);
-				matchedBlocks.push_back(grid->tiles[gridPos.x + 1][gridPos.y].block);
-			}
+			// Flags that blocks need repositioning
+			repositioningBlocks = true;
 		}
 	}
 
-	if (matchedBlocks.empty())
+	// If there are no matches, 
+	if (!repositioningBlocks)
 	{
-
-	}
-	else
-	{
-		// Remove matches from grid and return to blockPool
-		for (int i = 0; i < matchedBlocks.size(); ++i)
-		{
-			Vector2D gridPos = grid->getGridPosition(matchedBlocks[i]->transform);
-
-			grid->tiles[gridPos.x][gridPos.y].isOccupied = false;
-			grid->tiles[gridPos.x][gridPos.y].block = nullptr;
-
-			matchedBlocks[i]->entity->setActive(false);
-			blockPool->addEntity(matchedBlocks[i]->entity);
-		}
-
-		matchedBlocks.clear();
-		repositioningBlocks = true;
+		// Place the next pair of blocks
+		player->setBlocks();
+		std::cout << "Placed: " << player->totalPlacedBlocks << std::endl;
+		std::cout << "Active: " << activeBlocks.size() << std::endl;
 	}
 }
 
-void GameManager::updateScore(Block* blockA, Block* blockB)
+void GameManager::updateScoreRecursively(Block* block)
 {
-	if (blockA->color == blockB->color)
+	// Use a queue or stack for iterative BFS/DFS traversal
+	std::queue<Block*> blocksToCheck;
+	std::unordered_set<Block*> visited;
+
+	blocksToCheck.push(block);
+	visited.insert(block);
+
+	while (!blocksToCheck.empty())
 	{
-		if (blockA->score == 0)
-		{
-			blockA->score++;
-			blockB->score++;
-		}
+		Block* currentBlock = blocksToCheck.front();
+		blocksToCheck.pop();
 
-		if (blockB->score == 0)
-		{
-			blockA->score++;
-			blockB->score++;
-		}
+		// Get the neighbors of the current block
+		std::vector<Block*> neighbors = getSameColorNeighbors(currentBlock);
 
-		if (blockA->score > blockB->score)
+		for (Block* neighbor : neighbors)
 		{
-			blockB->score = blockA->score;
-		}
-		else if (blockB->score > blockA->score)
-		{
-			blockA->score = blockB->score;
+			if (visited.find(neighbor) == visited.end())
+			{
+				visited.insert(neighbor);
+				blocksToCheck.push(neighbor);
+
+				if (currentBlock->score == 0 && neighbor->score > 0)
+				{
+					neighbor->score++;
+				}
+				else if (currentBlock->score > 0 && neighbor->score == 0)
+				{
+					currentBlock->score++;
+				}
+				else if (currentBlock->score == 0 && neighbor->score == 0)
+				{
+					currentBlock->score = neighbor->score = 2;
+				}
+				if (currentBlock->score > neighbor->score)
+				{
+					neighbor->score = currentBlock->score;
+				}
+				else if (currentBlock->score < neighbor->score)
+				{
+					currentBlock->score = neighbor->score;
+				}
+			}
 		}
 	}
+}
+
+std::vector<Block*> GameManager::getSameColorNeighbors(Block* block)
+{
+	Vector2D gridPos = grid->getGridPosition(block->transform);
+	std::vector<Block*> neighbors;
+
+	if (gridPos.x - 1 >= 0) {
+		Block* neighborBlock = grid->tiles[gridPos.x - 1][gridPos.y].block;
+		if (neighborBlock != nullptr && block->color == neighborBlock->color) {
+			neighbors.push_back(neighborBlock);
+		}
+	}
+
+	if (gridPos.x + 1 < grid->numTiles.x) {
+		Block* neighborBlock = grid->tiles[gridPos.x + 1][gridPos.y].block;
+		if (neighborBlock != nullptr && block->color == neighborBlock->color) {
+			neighbors.push_back(neighborBlock);
+		}
+	}
+
+	if (gridPos.y - 1 >= 0) {
+		Block* neighborBlock = grid->tiles[gridPos.x][gridPos.y - 1].block;
+		if (neighborBlock != nullptr && block->color == neighborBlock->color) {
+			neighbors.push_back(neighborBlock);
+		}
+	}
+
+	if (gridPos.y + 1 < grid->numTiles.y) {
+		Block* neighborBlock = grid->tiles[gridPos.x][gridPos.y + 1].block;
+		if (neighborBlock != nullptr && block->color == neighborBlock->color) {
+			neighbors.push_back(neighborBlock);
+		}
+	}
+
+	return neighbors;
 }

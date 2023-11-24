@@ -16,9 +16,10 @@ public:
 	bool isObjectOnFreeTile(const Transform* obj, int xOffset, int yOffset);
 	void setLowestFreeTile();
 	Vector2D getGridPosition(const Transform* obj);
+	Vector2D getGridPosition(Vector2D position);
 	bool isTileFree(Vector2D tile, int xOffset, int yOffset);
-	void occupyTile(int tileX, int tileY);
-	void releaseTile(int tileX, int tileY);
+	void occupyTile(Block* obj);
+	void freeColumn(int column);
 
 private:
 	Vector2D initialPosition;

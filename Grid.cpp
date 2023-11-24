@@ -65,6 +65,16 @@ Vector2D Grid::getGridPosition(const Transform* obj)
 	return tile;
 }
 
+Vector2D Grid::getGridPosition(Vector2D position)
+{
+	// Calculate the tile indices based on the object's position
+	Vector2D tile;
+	tile.x = static_cast<int>((position.x - initialPosition.x) / tileSize.x);
+	tile.y = static_cast<int>((position.y - initialPosition.y) / tileSize.y);
+
+	return tile;
+}
+
 bool Grid::isTileFree(Vector2D tile, int xOffset, int yOffset)
 {
 	if (tile.x >= 0 && tile.x < numTiles.x && tile.y >= 0 && tile.y < numTiles.y)
@@ -75,17 +85,24 @@ bool Grid::isTileFree(Vector2D tile, int xOffset, int yOffset)
 	return false;
 }
 
-void Grid::occupyTile(int tileX, int tileY) {
+void Grid::occupyTile(Block* obj)
+{
+	Vector2D tilePos = getGridPosition(obj->transform);
+
 	// Occupy the specified tile
-	if (tileX >= 0 && tileX < numTiles.x && tileY >= 0 && tileY < numTiles.y) {
-		tiles[tileX][tileY].isOccupied = true;
+	if (tilePos.x >= 0 && tilePos.x < numTiles.x && tilePos.y >= 0 && tilePos.y < numTiles.y)
+	{
+		tiles[tilePos.x][tilePos.y].isOccupied = true;
+		tiles[tilePos.x][tilePos.y].block = obj;
 	}
 }
 
-void Grid::releaseTile(int tileX, int tileY) {
-	// Release the specified tile
-	if (tileX >= 0 && tileX < numTiles.x && tileY >= 0 && tileY < numTiles.y) {
-		tiles[tileX][tileY].isOccupied = false;
+void Grid::freeColumn(int column)
+{
+	for (int i = 0; i < numTiles.y; ++i)
+	{
+		tiles[column][i].isOccupied = false;
+		tiles[column][i].block = nullptr;
 	}
 }
 

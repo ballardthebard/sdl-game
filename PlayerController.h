@@ -11,6 +11,8 @@ class Block;
 class PlayerController : public Component
 {
 public:
+	int totalPlacedBlocks = 0;
+
 	PlayerController();
 	~PlayerController();
 	void init() override;
@@ -24,22 +26,26 @@ private:
 	Grid* grid;
 	GameManager* gameManager;
 
-	Transform* transform;
-	Block* blockA;
-	Block* blockB;
+	Block* parentBlock;
+	Block* childBlock;
 
 	int tileWidth = 32;
 	int tileHeight = 32;
 
-	int fallInitialPosition;
-	int fallVelocity = 3;
-	float fallTime = 2;
+	int ocupiedTiles = 0;
+
+	int fallVelocity = 4;
+	float fallTime = 1;
 	float fallCurrentTime = 0;
 
 	bool canMove = true;
+	bool blocksPlaced = false;
+	bool parentPlaced = false;
+	bool childPlaced = false;
 
 	void fall();
-	bool rapidFall(Block* block);
+	void rapidFall(Block* block);
 	void inputEvents();
+	void updateGridAndManager(Block* block);
 
 };

@@ -52,7 +52,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	grid.addComponent<GameManager>();
 	grid.addComponent<Sprite>("Assets/Sprites/T_Grid.png", 256, 512, 0, 0);
 
-	player.addComponent<Transform>();
 	player.addComponent<BlockPool>();
 	player.addComponent<PlayerController>();
 
