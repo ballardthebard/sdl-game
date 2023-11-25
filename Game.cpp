@@ -100,5 +100,6 @@ void Game::quit()
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
+
 	std::cout << "Game Quit!" << std::endl;
 }

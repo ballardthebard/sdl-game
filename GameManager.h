@@ -25,8 +25,6 @@ private:
 	BlockPool* blockPool;
 	PlayerController* player;
 
-	std::vector<Block*> matchedBlocks;
-
 	bool repositioningBlocks = false;
 
 	void validatedMatches();

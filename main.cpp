@@ -32,5 +32,7 @@ int main(int argc, char* argv[])
 
 	game->quit();
 
+	delete game;
+
 	return 0;
 }

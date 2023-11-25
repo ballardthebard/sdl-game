@@ -68,6 +68,8 @@ bool PlayerController::repositionBlocks(std::vector<Block*> activeBlocks)
 		}
 		rapidFall(activeBlocks[i]);
 	}
+	// Tell GameManager to validate matches if not blocks are falling
+	gameManager->validateMatches = !isFalling;
 
 	return isFalling;
 }
@@ -90,6 +92,8 @@ void PlayerController::fall()
 		// Reset controller
 		parentBlock->transform->setParent(nullptr);
 		childBlock->transform->setParent(nullptr);
+		parentBlock = nullptr;
+		childBlock = nullptr;
 
 		// Tell GameManager to validate matches
 		gameManager->validateMatches = true;

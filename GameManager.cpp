@@ -8,7 +8,6 @@
 #include "PlayerController.h"
 #include "Block.h"
 
-
 GameManager::GameManager()
 {
 	activeBlocks = std::vector<Block*>();
@@ -18,7 +17,6 @@ GameManager::~GameManager() {}
 void GameManager::init()
 {
 	grid = &entity->getComponent<Grid>();
-
 }
 
 void GameManager::update()
@@ -50,35 +48,11 @@ void GameManager::addPlacedBlock(Block* block) {
 
 void GameManager::validatedMatches()
 {
+	repositioningBlocks = false;
+
 	for (int i = 0; i < activeBlocks.size(); ++i)
 	{
 		updateScoreRecursively(activeBlocks[i]);
-	}
-
-	repositioningBlocks = false;
-	for (int i = 0; i < activeBlocks.size(); ++i)
-	{
-		if (activeBlocks[i]->score >= 4)
-		{
-			// Get current block grid position
-			Vector2D gridPos = grid->getGridPosition(activeBlocks[i]->transform);
-
-			// Return block to pool
-			activeBlocks[i]->score = 0;
-			activeBlocks[i]->entity->setActive(false);
-
-			blockPool->addEntity(activeBlocks[i]->entity);
-
-			// Remove block from grid
-			grid->freeColumn(gridPos.x);
-
-			// Remove block from activeBlocks
-			activeBlocks.erase(activeBlocks.begin() + i);
-			player->totalPlacedBlocks--;
-
-			// Flags that blocks need repositioning
-			repositioningBlocks = true;
-		}
 	}
 
 	// If there are no matches, 
@@ -114,28 +88,32 @@ void GameManager::updateScoreRecursively(Block* block)
 			{
 				visited.insert(neighbor);
 				blocksToCheck.push(neighbor);
-
-				if (currentBlock->score == 0 && neighbor->score > 0)
-				{
-					neighbor->score++;
-				}
-				else if (currentBlock->score > 0 && neighbor->score == 0)
-				{
-					currentBlock->score++;
-				}
-				else if (currentBlock->score == 0 && neighbor->score == 0)
-				{
-					currentBlock->score = neighbor->score = 2;
-				}
-				if (currentBlock->score > neighbor->score)
-				{
-					neighbor->score = currentBlock->score;
-				}
-				else if (currentBlock->score < neighbor->score)
-				{
-					currentBlock->score = neighbor->score;
-				}
 			}
+		}
+	}
+
+	if (visited.size() >= 4)
+	{
+		// Iterating through the visited set and pushing elements into matchedBlocks
+		for (auto blockPtr : visited)
+		{
+			// Get current block grid position
+			Vector2D gridPos = grid->getGridPosition(blockPtr->transform);
+
+			// Return block to pool
+			blockPtr->entity->setActive(false);
+
+			blockPool->addEntity(blockPtr->entity);
+
+			// Remove block from grid
+			grid->freeColumn(gridPos.x);
+
+			// Remove block from activeBlocks
+			activeBlocks.erase(std::remove(activeBlocks.begin(), activeBlocks.end(), blockPtr), activeBlocks.end());
+			player->totalPlacedBlocks--;
+
+			// Flags that blocks need repositioning
+			repositioningBlocks = true;
 		}
 	}
 }
