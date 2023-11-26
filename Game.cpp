@@ -13,11 +13,11 @@ SDL_Event Game::event;
 float Game::deltaTime = 0;
 
 int gridPosX = 64;
-int gridPosY = 64;
+int gridPosY = 32;
 int	gridSizeX = 32;
 int	gridSizeY = 32;
 int gridTilesX = 8;
-int gridTilesY = 16;
+int gridTilesY = 17;
 
 auto& grid(entityManager.addEntity());
 auto& player(entityManager.addEntity());
@@ -57,7 +57,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 	grid.addComponent<Grid>(gridPosX, gridPosY, gridSizeX, gridSizeY, gridTilesX, gridTilesY);
 	grid.addComponent<GameManager>();
-	grid.addComponent<Sprite>("Assets/Sprites/T_Grid.png", 256, 512, gridPosX, gridPosY);
+	grid.addComponent<Sprite>("Assets/Sprites/T_Grid.png", 256, 512, gridPosX, gridPosY + gridSizeY);
 
 	player.addComponent<BlockPool>();
 	player.addComponent<PlayerController>();

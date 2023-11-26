@@ -29,28 +29,44 @@ void PlayerController::setBlocks()
 {
 	if (blockPool == nullptr) return;
 
-	parentBlock = &blockPool->getEntity()->getComponent<Block>();
-	parentBlock->transform->position.x = 64;
-	parentBlock->transform->position.y = 32;
-	parentBlock->transform->rotation = 0;
+	if (parentBlock != nullptr && childBlock != nullptr)
+	{
+  		Vector2D parentGridPos = grid->getGridPosition(parentBlock->transform);
+		Vector2D childGridPos = grid->getGridPosition(childBlock->transform);
 
-	if (!grid->isObjectOnFreeTile(parentBlock->transform, 0, 1))
-		gameManager->gameOver();
+		if (parentGridPos.y == 0 || childGridPos.y == 0)
+		{
+			blockPool->addEntity(parentBlock->entity);
+			blockPool->addEntity(parentBlock->entity);
+
+			parentBlock = nullptr;
+			childBlock = nullptr;
+
+			gameManager->gameOver();
+
+			return;
+		}
+	}
+
+	parentBlock = &blockPool->getEntity()->getComponent<Block>();
+	parentBlock->transform->position.x = grid->initialPosition.x;
+	parentBlock->transform->position.y = grid->initialPosition.y;
+	parentBlock->transform->rotation = 0;
 
 	childBlock = &blockPool->getEntity()->getComponent<Block>();
 	childBlock->transform->position = parentBlock->transform->position;
-	childBlock->transform->position.x += tileWidth;
+	childBlock->transform->position.x += grid->tileSize.x;
 	childBlock->transform->rotation = 0;
 
 	childBlock->transform->setParent(parentBlock->transform);
+	blocksPlaced = false;
+	parentPlaced = false;
+	childPlaced = false;
 
 	parentBlock->entity->setActive(true);
 	childBlock->entity->setActive(true);
 
 	canMove = true;
-	blocksPlaced = false;
-	parentPlaced = false;
-	childPlaced = false;
 }
 
 bool PlayerController::repositionBlocks(std::vector<Block*> activeBlocks)
@@ -58,19 +74,15 @@ bool PlayerController::repositionBlocks(std::vector<Block*> activeBlocks)
 	bool isFalling = false;
 	for (int i = 0; i < activeBlocks.size(); ++i)
 	{
-		if (grid->isObjectOnFreeTile(activeBlocks[i]->transform, 0, 1))
-		{
-			isFalling = true;
-			activeBlocks[i]->isFalling = true;
-		}
-		else if (!activeBlocks[i]->isFalling)
-		{
-			grid->occupyTile(activeBlocks[i]);
-			//std::cout << "Occupied Tiles: " << ocupiedTiles << std::endl;
-		}
+		activeBlocks[i]->isFalling = true;
 		rapidFall(activeBlocks[i]);
+
+		if (activeBlocks[i]->isFalling)
+			isFalling = true;
+		else
+			grid->occupyTile(activeBlocks[i]);
 	}
-	// Tell GameManager to validate matches if not blocks are falling
+	// Tell GameManager to validate matches if no blocks are falling
 	gameManager->validateMatches = !isFalling;
 
 	return isFalling;
@@ -78,7 +90,6 @@ bool PlayerController::repositionBlocks(std::vector<Block*> activeBlocks)
 
 void PlayerController::updateGridAndManager(Block* block)
 {
-	totalPlacedBlocks++;
 	grid->occupyTile(block);
 	gameManager->addPlacedBlock(block);
 }
@@ -94,8 +105,6 @@ void PlayerController::fall()
 		// Reset controller
 		parentBlock->transform->setParent(nullptr);
 		childBlock->transform->setParent(nullptr);
-		parentBlock = nullptr;
-		childBlock = nullptr;
 
 		// Tell GameManager to validate matches
 		gameManager->validateMatches = true;
@@ -114,10 +123,10 @@ void PlayerController::fall()
 		if (fallCurrentTime > fallTime)
 		{
 			fallCurrentTime = 0;
-			parentBlock->transform->position.y += tileHeight - ((int)parentBlock->transform->position.y % tileHeight);
+			parentBlock->transform->position.y += grid->tileSize.y - ((int)parentBlock->transform->position.y % (int)grid->tileSize.y);
 		}
 	}
-	// If either block can't move to the next row and canMove is true
+	// If either block can't move to the next row
 	else if (!blocksPlaced)
 	{
 		// Pause player control over blocks 
@@ -199,6 +208,7 @@ void PlayerController::inputEvents()
 			// Rapid fall
 			parentBlock->isFalling = true;
 			childBlock->isFalling = true;
+
 			break;
 
 		case SDLK_RIGHT:
@@ -206,7 +216,7 @@ void PlayerController::inputEvents()
 			if (grid->isObjectOnFreeTile(parentBlock->transform, 1, 0) && grid->isObjectOnFreeTile(childBlock->transform, 1, 0))
 			{
 				// Move right
-				parentBlock->transform->position.x += tileWidth;
+				parentBlock->transform->position.x += grid->tileSize.x;
 			}
 			break;
 		case SDLK_LEFT:
@@ -214,7 +224,7 @@ void PlayerController::inputEvents()
 			if (grid->isObjectOnFreeTile(parentBlock->transform, -1, 0) && grid->isObjectOnFreeTile(childBlock->transform, -1, 0))
 			{
 				// Move left
-				parentBlock->transform->position.x -= tileWidth;
+				parentBlock->transform->position.x -= grid->tileSize.x;
 			}
 			break;
 

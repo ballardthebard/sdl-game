@@ -8,6 +8,8 @@ class Grid : public Component {
 public:
 	std::vector<std::vector<Tile>> tiles;
 	Vector2D numTiles;
+	Vector2D initialPosition;
+	Vector2D tileSize;
 
 	Grid(int posX, int posY, int sizeX, int sizeY, int tilesX, int tilesY);
 	~Grid();
@@ -20,8 +22,7 @@ public:
 	void freeColumn(int column);
 
 private:
-	Vector2D initialPosition;
-	Vector2D tileSize;
+
 
 	void initializeTilesVector();
 };

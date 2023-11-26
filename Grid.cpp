@@ -67,7 +67,7 @@ Vector2D Grid::getGridPosition(Vector2D position)
 
 bool Grid::isTileFree(Vector2D tile, int xOffset, int yOffset)
 {
-	if (tile.x >= 0 && tile.x < numTiles.x && tile.y >= 0 && tile.y < numTiles.y)
+	if (tile.x + xOffset >= 0 && tile.x + xOffset < numTiles.x && tile.y + yOffset >= 0 && tile.y + yOffset < numTiles.y)
 	{
 		return tiles[tile.x + xOffset][tile.y + yOffset].isOccupied;
 	}

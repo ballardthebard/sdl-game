@@ -60,7 +60,6 @@ void GameManager::validatedMatches()
 	{
 		// Place the next pair of blocks
 		player->setBlocks();
-		std::cout << "Placed: " << player->totalPlacedBlocks << std::endl;
 		std::cout << "Active: " << activeBlocks.size() << std::endl;
 	}
 }
@@ -110,7 +109,6 @@ void GameManager::updateScoreRecursively(Block* block)
 
 			// Remove block from activeBlocks
 			activeBlocks.erase(std::remove(activeBlocks.begin(), activeBlocks.end(), blockPtr), activeBlocks.end());
-			player->totalPlacedBlocks--;
 
 			// Flags that blocks need repositioning
 			repositioningBlocks = true;
