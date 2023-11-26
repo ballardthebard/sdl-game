@@ -30,12 +30,14 @@ void PlayerController::setBlocks()
 	if (blockPool == nullptr) return;
 
 	parentBlock = &blockPool->getEntity()->getComponent<Block>();
-	childBlock = &blockPool->getEntity()->getComponent<Block>();
-
-	parentBlock->transform->position.x = 0;
-	parentBlock->transform->position.y = 0;
+	parentBlock->transform->position.x = 64;
+	parentBlock->transform->position.y = 32;
 	parentBlock->transform->rotation = 0;
 
+	if (!grid->isObjectOnFreeTile(parentBlock->transform, 0, 1))
+		gameManager->gameOver();
+
+	childBlock = &blockPool->getEntity()->getComponent<Block>();
 	childBlock->transform->position = parentBlock->transform->position;
 	childBlock->transform->position.x += tileWidth;
 	childBlock->transform->rotation = 0;

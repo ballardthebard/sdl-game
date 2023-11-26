@@ -19,6 +19,7 @@ public:
 	void update() override;
 	void setPlayerAndPool(Entity* entity);
 	void addPlacedBlock(Block* block);
+	void gameOver();
 
 private:
 	Grid* grid;

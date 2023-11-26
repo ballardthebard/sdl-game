@@ -1,21 +1,25 @@
 #include "Grid.h"
 #include "Transform.h"
 
-Grid::Grid() {}
-Grid::~Grid() {}
+Grid::Grid(int posX, int posY, int sizeX, int sizeY, int tilesX, int tilesY)
+{
+	initialPosition.x = posX;
+	initialPosition.y = posY;
+	tileSize.x = sizeX;
+	tileSize.y = sizeY;
+	numTiles.x = tilesX;
+	numTiles.y = tilesY;
+}
+Grid::~Grid()
+{
+
+}
 
 void Grid::init()
 {
-	initialPosition.x = 0;
-	initialPosition.y = 0;
-	tileSize.x = 32;
-	tileSize.y = 32;
-	numTiles.x = 8;
-	numTiles.y = 16;
 
-	lowestFreeTile.resize(numTiles.x);
+
 	initializeTilesVector();
-	setLowestFreeTile();
 }
 
 bool Grid::isObjectOnFreeTile(const Transform* obj, int xOffset, int yOffset) {
@@ -40,20 +44,6 @@ bool Grid::isObjectOnFreeTile(const Transform* obj, int xOffset, int yOffset) {
 	return false;
 }
 
-void Grid::setLowestFreeTile()
-{
-	for (int x = 0; x < numTiles.x; x++)
-	{
-		for (int y = numTiles.y - 1; y >= 0; y--)
-		{
-			if (!tiles[x][y].isOccupied)
-			{
-				lowestFreeTile[x] = y;
-				break;
-			}
-		}
-	}
-}
 
 Vector2D Grid::getGridPosition(const Transform* obj)
 {

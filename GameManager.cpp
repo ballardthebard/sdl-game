@@ -153,3 +153,22 @@ std::vector<Block*> GameManager::getSameColorNeighbors(Block* block)
 
 	return neighbors;
 }
+
+void GameManager::gameOver()
+{
+	for (int i = 0; i < activeBlocks.size(); ++i)
+	{
+		// Get current block grid position
+		Vector2D gridPos = grid->getGridPosition(activeBlocks[i]->transform);
+
+		// Return block to pool
+		activeBlocks[i]->entity->setActive(false);
+		blockPool->addEntity(activeBlocks[i]->entity);
+
+		// Remove block from grid
+		grid->freeColumn(gridPos.x);
+	}
+
+	// Reset activeBlocks
+	activeBlocks.clear();
+}
