@@ -31,7 +31,7 @@ void PlayerController::setBlocks()
 
 	if (parentBlock != nullptr && childBlock != nullptr)
 	{
-  		Vector2D parentGridPos = grid->getGridPosition(parentBlock->transform);
+		Vector2D parentGridPos = grid->getGridPosition(parentBlock->transform);
 		Vector2D childGridPos = grid->getGridPosition(childBlock->transform);
 
 		if (parentGridPos.y == 0 || childGridPos.y == 0)
@@ -49,7 +49,7 @@ void PlayerController::setBlocks()
 	}
 
 	parentBlock = &blockPool->getEntity()->getComponent<Block>();
-	parentBlock->transform->position.x = grid->initialPosition.x;
+	parentBlock->transform->position.x = (grid->tileSize.x * grid->numTiles.x / 2) - grid->tileSize.x;
 	parentBlock->transform->position.y = grid->initialPosition.y;
 	parentBlock->transform->rotation = 0;
 
@@ -196,12 +196,20 @@ void PlayerController::rapidFall(Block* block)
 
 void PlayerController::inputEvents()
 {
-	// Check if player can give inputs
-	if (!canMove) return;
+
 
 	// Check if any key is pressed
 	if (Game::event.type == SDL_KEYDOWN)
 	{
+		if (!gameManager->isGameStarted)
+		{
+			gameManager->isGameStarted = true;
+			gameManager->gameStart();
+		}
+
+		// Check if player can give inputs
+		if (!canMove) return;
+
 		switch (Game::event.key.keysym.sym)
 		{
 		case SDLK_SPACE:
@@ -213,7 +221,8 @@ void PlayerController::inputEvents()
 
 		case SDLK_RIGHT:
 			// Check if tile to the right is free
-			if (grid->isObjectOnFreeTile(parentBlock->transform, 1, 0) && grid->isObjectOnFreeTile(childBlock->transform, 1, 0))
+			if (!parentBlock->isFalling && !childBlock->isFalling
+				&& grid->isObjectOnFreeTile(parentBlock->transform, 1, 0) && grid->isObjectOnFreeTile(childBlock->transform, 1, 0))
 			{
 				// Move right
 				parentBlock->transform->position.x += grid->tileSize.x;
@@ -221,7 +230,8 @@ void PlayerController::inputEvents()
 			break;
 		case SDLK_LEFT:
 			// Check if tile to the left is free
-			if (grid->isObjectOnFreeTile(parentBlock->transform, -1, 0) && grid->isObjectOnFreeTile(childBlock->transform, -1, 0))
+			if (!parentBlock->isFalling && !childBlock->isFalling
+				&& grid->isObjectOnFreeTile(parentBlock->transform, -1, 0) && grid->isObjectOnFreeTile(childBlock->transform, -1, 0))
 			{
 				// Move left
 				parentBlock->transform->position.x -= grid->tileSize.x;
@@ -280,7 +290,7 @@ void PlayerController::inputEvents()
 		}
 	}
 	// Check if any key is released
-	if (Game::event.type == SDL_KEYUP)
+	if (canMove && Game::event.type == SDL_KEYUP)
 	{
 		switch (Game::event.key.keysym.sym)
 		{

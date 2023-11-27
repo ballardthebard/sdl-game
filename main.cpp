@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 	float timeElapsed;
 
 	game = new Game();
-	game->init("Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
+	game->init("TECHNICAL CHALLENGE", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 256, 576, false);
 
 	while (game->running())
 	{

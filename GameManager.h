@@ -11,6 +11,7 @@ class GameManager : public Component
 {
 public:
 	bool validateMatches;
+	bool isGameStarted;
 	std::vector<Block*> activeBlocks;
 
 	GameManager();
@@ -18,13 +19,16 @@ public:
 	void init() override;
 	void update() override;
 	void setPlayerAndPool(Entity* entity);
+	void setMessage(Entity* entity);
 	void addPlacedBlock(Block* block);
 	void gameOver();
+	void gameStart();
 
 private:
 	Grid* grid;
 	BlockPool* blockPool;
 	PlayerController* player;
+	Entity* startMessage;
 
 	bool repositioningBlocks = false;
 

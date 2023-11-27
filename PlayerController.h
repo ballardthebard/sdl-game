@@ -29,11 +29,11 @@ private:
 
 	int ocupiedTiles = 0;
 
-	int fallVelocity = 1;
-	float fallTime = .1f;
+	int fallVelocity = 8;
+	float fallTime = 1;
 	float fallCurrentTime = 0;
 
-	bool canMove = true;
+	bool canMove = false;
 	bool blocksPlaced = false;
 	bool parentPlaced = false;
 	bool childPlaced = false;

@@ -12,15 +12,19 @@ SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 float Game::deltaTime = 0;
 
-int gridPosX = 64;
+int gridPosX = 0;
 int gridPosY = 32;
 int	gridSizeX = 32;
 int	gridSizeY = 32;
 int gridTilesX = 8;
 int gridTilesY = 17;
 
+int messagePosX = 0;
+int messagePoxY = 0;
+
 auto& grid(entityManager.addEntity());
 auto& player(entityManager.addEntity());
+auto& startMessage(entityManager.addEntity());
 
 Game::Game()
 {}
@@ -58,6 +62,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	grid.addComponent<Grid>(gridPosX, gridPosY, gridSizeX, gridSizeY, gridTilesX, gridTilesY);
 	grid.addComponent<GameManager>();
 	grid.addComponent<Sprite>("Assets/Sprites/T_Grid.png", 256, 512, gridPosX, gridPosY + gridSizeY);
+	startMessage.addComponent<Sprite>("Assets/Sprites/T_Start.png", 256, 128, gridPosX, gridTilesY * gridSizeY / 2);
 
 	player.addComponent<BlockPool>();
 	player.addComponent<PlayerController>();
@@ -65,9 +70,8 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	player.getComponent<BlockPool>().initPool(&entityManager, 384);
 
 	grid.getComponent<GameManager>().setPlayerAndPool(&player);
+	grid.getComponent<GameManager>().setMessage(&startMessage);
 	player.getComponent<PlayerController>().setGridAndManager(&grid);
-
-	player.getComponent<PlayerController>().setBlocks();
 }
 
 void Game::start()

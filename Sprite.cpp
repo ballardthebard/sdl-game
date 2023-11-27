@@ -26,8 +26,8 @@ Sprite::Sprite(const char* path, int width, int height, int xpos, int ypos)
 
 	srcRect.h = height;
 	srcRect.w = width;
-	srcRect.x = xpos;
-	srcRect.y = ypos;
+	srcRect.x = 0;
+	srcRect.y = 0;
 
 	destRect.h = height;
 	destRect.w = width;

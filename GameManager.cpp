@@ -38,6 +38,11 @@ void GameManager::setPlayerAndPool(Entity* entity)
 	blockPool = &entity->getComponent<BlockPool>();
 }
 
+void GameManager::setMessage(Entity* entity)
+{
+	startMessage = entity;
+}
+
 // Function to add a block reference to activeBlocks
 void GameManager::addPlacedBlock(Block* block) {
 	auto it = std::find(activeBlocks.begin(), activeBlocks.end(), block);
@@ -152,6 +157,12 @@ std::vector<Block*> GameManager::getSameColorNeighbors(Block* block)
 	return neighbors;
 }
 
+void GameManager::gameStart()
+{
+	startMessage->setActive(false);
+	player->setBlocks();
+}
+
 void GameManager::gameOver()
 {
 	for (int i = 0; i < activeBlocks.size(); ++i)
@@ -169,4 +180,9 @@ void GameManager::gameOver()
 
 	// Reset activeBlocks
 	activeBlocks.clear();
+
+	// Stop game
+	isGameStarted = false;
+
+	startMessage->setActive(true);
 }
