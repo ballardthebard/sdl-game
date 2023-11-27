@@ -65,7 +65,6 @@ void GameManager::validatedMatches()
 	{
 		// Place the next pair of blocks
 		player->setBlocks();
-		std::cout << "Active: " << activeBlocks.size() << std::endl;
 	}
 }
 
